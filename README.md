@@ -1,1 +1,1 @@
-# sympactl.dev
+# sympactl.sh
