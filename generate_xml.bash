@@ -1,45 +1,91 @@
 #!/bin/bash
+set -euo pipefail
+LC_ALL=C
 
-# 引数チェック
-if [ "$#" -lt 5 ]; then
-    echo "Usage: $0 <listname> <subject> <description> <comma-separated-owners> <type>" >&2
-    exit 1
+escape_xml() {
+  # POSIX sed での単純置換（順序重要）
+  local s=$1
+  s=${s//&/&amp;}
+  s=${s//</&lt;}
+  s=${s//>/&gt;}
+  s=${s//\"/&quot;}
+  s=${s//\'/&apos;}
+  printf '%s' "$s"
+}
+
+usage() {
+  echo "Usage: $0 <listname> <subject> <description> <comma-separated-owners> <type>" >&2
+  exit 1
+}
+
+[[ $# -lt 5 ]] && usage
+
+raw_listname=$1
+raw_subject=$2
+raw_description=$3
+raw_owners_csv=$4
+raw_type=$5
+
+# listname 制約（必要なら強めてもOK）
+if [[ ! "$raw_listname" =~ ^[a-zA-Z0-9_-]+$ ]]; then
+  echo "Error: listname must contain only alphanumeric/underscore/hyphen" >&2
+  exit 1
 fi
 
-LIST_NAME="$1"
-LIST_SUBJECT="$2"
-LIST_DESCRIPTION="$3"
-OWNERS_CSV=$(echo "$4" | tr -d '"')  # ダブルクォートを除去
-LIST_TYPE="$5"
-
-# カンマ区切り→改行へ変換
-IFS=',' read -ra OWNER_ARRAY <<< "$OWNERS_CSV"
-
-# XML出力
-echo "<?xml version='1.0' encoding='utf-8'?>"
-echo "<list>"
-echo "    <listname>${LIST_NAME}</listname>"
-echo "    <type>${LIST_TYPE}</type>"
-echo "    <subject>${LIST_SUBJECT}</subject>"
-echo "    <description>${LIST_DESCRIPTION}</description>"
-echo "    <status>open</status>"
-echo "    <language>ja</language>"
-
-for owner in "${OWNER_ARRAY[@]}"; do
-    echo "    <owner multiple=\"1\">"
-    echo "        <email>${owner}</email>"
-    echo "    </owner>"
+# owners 配列化・トリム・空要素除外
+IFS=',' read -r -a owners <<< "$raw_owners_csv"
+norm_owners=()
+declare -A seen=()
+for x in "${owners[@]}"; do
+  # trim spaces
+  x="${x#"${x%%[![:space:]]*}"}"
+  x="${x%"${x##*[![:space:]]}"}"
+  [[ -z "$x" ]] && continue
+  # ざっくりメール形式チェック（緩め）
+  if [[ ! "$x" =~ ^[^@[:space:]]+@[^@[:space:]]+\.[^@[:space:]]+$ ]]; then
+    echo "Warning: owner '$x' does not look like an email; outputting as-is." >&2
+  fi
+  # 重複排除（任意）
+  if [[ -z "${seen[$x]+_}" ]]; then
+    norm_owners+=("$x")
+    seen[$x]=1
+  fi
 done
 
-echo "    <max_size />"
-echo "    <reply_to_header>"
-echo "        <value>sender</value>"
-echo "        <other_email />"
-echo "    </reply_to_header>"
-echo "    <process_archive>off</process_archive>"
-echo "    <archive>"
-echo "        <web_access>private</web_access>"
-echo "    </archive>"
-echo "    <send>private</send>"
-echo "    <topic>arts,computing,computing/apps,computing/network,economics,news</topic>"
-echo "</list>"
+LIST_NAME=$(escape_xml "$raw_listname")
+LIST_SUBJECT=$(escape_xml "$raw_subject")
+LIST_DESCRIPTION=$(escape_xml "$raw_description")
+LIST_TYPE=$(escape_xml "$raw_type")
+
+printf "%s\n" "<?xml version='1.0' encoding='utf-8'?>"
+printf "%s\n" "<list>"
+printf "    <listname>%s</listname>\n" "$LIST_NAME"
+printf "    <type>%s</type>\n" "$LIST_TYPE"
+printf "    <subject>%s</subject>\n" "$LIST_SUBJECT"
+printf "    <description>%s</description>\n" "$LIST_DESCRIPTION"
+cat <<'EOF'
+    <status>open</status>
+    <language>ja</language>
+EOF
+
+for owner in "${norm_owners[@]}"; do
+  owner_esc=$(escape_xml "$owner")
+  printf "%s\n" "    <owner multiple=\"1\">"
+  printf "        <email>%s</email>\n" "$owner_esc"
+  printf "%s\n" "    </owner>"
+done
+
+cat <<'EOF'
+    <max_size />
+    <reply_to_header>
+        <value>sender</value>
+        <other_email />
+    </reply_to_header>
+    <process_archive>off</process_archive>
+    <archive>
+        <web_access>private</web_access>
+    </archive>
+    <send>private</send>
+    <topic>arts,computing,computing/apps,computing/network,economics,news</topic>
+</list>
+EOF
