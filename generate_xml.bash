@@ -3,7 +3,6 @@ set -euo pipefail
 LC_ALL=C
 
 escape_xml() {
-  # POSIX sed での単純置換（順序重要）
   local s=$1
   s=${s//&/&amp;}
   s=${s//</&lt;}
@@ -26,13 +25,11 @@ raw_description=$3
 raw_owners_csv=$4
 raw_type=$5
 
-# listname 制約（必要なら強めてもOK）
 if [[ ! "$raw_listname" =~ ^[a-zA-Z0-9_-]+$ ]]; then
   echo "Error: listname must contain only alphanumeric/underscore/hyphen" >&2
   exit 1
 fi
 
-# owners 配列化・トリム・空要素除外
 IFS=',' read -r -a owners <<< "$raw_owners_csv"
 norm_owners=()
 declare -A seen=()
@@ -41,11 +38,9 @@ for x in "${owners[@]}"; do
   x="${x#"${x%%[![:space:]]*}"}"
   x="${x%"${x##*[![:space:]]}"}"
   [[ -z "$x" ]] && continue
-  # ざっくりメール形式チェック（緩め）
   if [[ ! "$x" =~ ^[^@[:space:]]+@[^@[:space:]]+\.[^@[:space:]]+$ ]]; then
     echo "Warning: owner '$x' does not look like an email; outputting as-is." >&2
   fi
-  # 重複排除（任意）
   if [[ -z "${seen[$x]+_}" ]]; then
     norm_owners+=("$x")
     seen[$x]=1
