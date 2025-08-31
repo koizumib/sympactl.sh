@@ -3,7 +3,7 @@
 # === 設定 ===
 SYMPA_CMD="/usr/sbin/sympa"
 LISTDATA_DIR="/var/lib/sympa/list_data"
-DOMAIN="sympa.dg-verification.net"
+DOMAIN="dg-verification.net"
 
 # エラー時は即終了
 set -e

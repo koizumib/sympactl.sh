@@ -58,6 +58,7 @@ printf "    <listname>%s</listname>\n" "$LIST_NAME"
 printf "    <type>%s</type>\n" "$LIST_TYPE"
 printf "    <subject>%s</subject>\n" "$LIST_SUBJECT"
 printf "    <description>%s</description>\n" "$LIST_DESCRIPTION"
+printf "    <send>private</send>\n"
 cat <<'EOF'
     <status>open</status>
     <language>ja</language>
@@ -80,7 +81,6 @@ cat <<'EOF'
     <archive>
         <web_access>private</web_access>
     </archive>
-    <send>private</send>
     <topic>arts,computing,computing/apps,computing/network,economics,news</topic>
 </list>
 EOF

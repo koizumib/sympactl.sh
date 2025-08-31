@@ -1,8 +1,9 @@
 #!/bin/bash
 
 # ---- 設定 ----
-XML_GENERATOR="/usr/local/bin/sympactl_utils/generate_xml.bash"
-CMD_UTIL="/usr/local/bin/sympactl_utils/sympa_cmd_util.bash"
+CMD_DIR="/root/dev/sympactl.sh"
+XML_GENERATOR="$CMD_DIR/generate_xml.bash"
+CMD_UTIL="$CMD_DIR/sympa_cmd_util.bash"
 LOG_FILE="/var/log/sympa_ml.log"
 LISTFILE_DIR="."  # カレントディレクトリに .list ファイルがある想定
 
