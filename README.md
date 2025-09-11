@@ -119,15 +119,15 @@ REMOVE,old-announce,Deprecated announce list
 
 ```
 [owner]
-mladmin@dg-verification.net
+mladmin@example.com
 
 [editor]
-koizumi@dg-verification.net
-ogura@dg-verification.net
+tanaka@example.com
+yamada@example.com
 
 [member]
-imamura@dg-verification.net
-koizumi@dg-verification.net
+suzuki@example.com
+yokoyama@example.com
 ```
 
 * `#` または `;` 以降はコメント
@@ -168,17 +168,17 @@ sudo mv sympa_ctl /usr/local/bin/
 
 cat >/usr/local/bin/sympa_ctl/config.py <<'PY'
 SYMPA_CMD = "/usr/sbin/sympa"
-DOMAIN = "sympa.dg-verification.net"
+DOMAIN = "sympa.example.com"
 LISTFILE_DIR = "/usr/local/bin/sympa_ctl/lists"
 PY
 
 mkdir -p /usr/local/bin/sympa_ctl/lists
 cat >/usr/local/bin/sympa_ctl/lists/dev-team.list <<'LIST'
 [owner]
-mladmin@dg-verification.net
+mladmin@example.com
 [member]
-koizumi@dg-verification.net
-imamura@dg-verification.net
+tanaka@example.com
+yamada@example.com
 LIST
 
 echo 'export PATH="/usr/local/bin/sympa_ctl:$PATH"' >>~/.bashrc
