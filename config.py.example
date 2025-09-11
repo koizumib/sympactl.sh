@@ -1,0 +1,10 @@
+# config.py
+from pathlib import Path
+
+SYMPA_CMD = "/usr/sbin/sympa"  # 実行はテストでモックするのでそのままで可
+DOMAIN = "dg-verification.net"
+LISTDATA_DIR = Path(f"/var/lib/sympa/list_data/{DOMAIN}")
+XML_GENERATOR = "/usr/local/bin/sympactl_utils/generate_xml.bash"
+CMD_UTIL = "/usr/local/bin/sympactl_utils/sympa_cmd_util.bash"
+LOG_FILE = "/var/log/sympa_ml.log"
+LISTFILE_DIR = "."  # カレントディレクトリに .list ファイルがある想定

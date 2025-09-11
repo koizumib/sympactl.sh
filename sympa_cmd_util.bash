@@ -8,6 +8,19 @@ DOMAIN="sympa.dg-verification.net"
 # エラー時は即終了
 set -e
 
+# === ログ出力関数 ===
+log() {
+    local msg="$1"
+    local timestamp="$(date '+%Y-%m-%d %H:%M:%S')"
+    echo "$timestamp $msg"
+}
+
+log_error() {
+    local msg="$1"
+    local timestamp="$(date '+%Y-%m-%d %H:%M:%S')"
+    echo -e "\e[31m$timestamp $msg\e[0m"
+}
+
 # === メーリングリスト存在確認 ===
 list_exists() {
     local listname="$1"

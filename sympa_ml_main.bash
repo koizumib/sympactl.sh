@@ -9,7 +9,14 @@ LISTFILE_DIR="."  # カレントディレクトリに .list ファイルがあ�
 # ---- ログ出力関数 ----
 log() {
     local msg="$1"
-    echo "$(date '+%Y-%m-%d %H:%M:%S') $msg" | tee -a "$LOG_FILE"
+    local timestamp="$(date '+%Y-%m-%d %H:%M:%S')"
+    echo "$timestamp $msg" | tee -a
+}
+
+log_error() {
+    local msg="$1"
+    local timestamp="$(date '+%Y-%m-%d %H:%M:%S')"
+    echo -e "\e[31m$timestamp $msg\e[0m"
 }
 
 # ---- 引数確認 ----
