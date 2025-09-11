@@ -39,13 +39,13 @@ def rm_tree(path: Path | None) -> None:
 
 def write_temp_xml(xml_text: str) -> Path | None:
     try:
-        tmp = mktemp_with_content(prefix="sympa_create_", suffix=".xml")
-        tmp.write_text(xml_text, encoding="utf-8")
+        tmp = mktemp_with_content(prefix="sympa_create_", suffix=".xml", content=xml_text)
         tmp.chmod(0o644)
         return tmp
     except Exception as e:
         eprint_red(f"Failed to create temporary XML: {e}")
         return None
+
 
 
 def handle_create(listname: str, description: str) -> tuple[bool, str]:
