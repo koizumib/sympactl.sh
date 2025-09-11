@@ -2,6 +2,6 @@
 from pathlib import Path
 
 SYMPA_CMD = "/usr/sbin/sympa"
-DOMAIN = "dg-verification.net" #操作するメーリングリストのドメイン
+DOMAIN = "example.com" #操作するメーリングリストのドメイン
 LISTDATA_DIR = Path(f"/var/lib/sympa/list_data/{DOMAIN}") # sympaのメーリングリスト情報が配置されるディレクトリ
 LISTFILE_DIR = "."  # カレントディレクトリに .list ファイルがある想定
