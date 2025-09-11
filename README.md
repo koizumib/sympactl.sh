@@ -149,17 +149,6 @@ yokoyama@example.com
 
 ---
 
-## よくあるエラー
-
-* `Failed to load config`
-  → `/usr/local/bin/sympa_ctl/config.py` が見つからない/不正。`SYMPA_CMD`, `DOMAIN`, `LISTFILE_DIR` を定義してください。
-* `list not found`（`sympa_export`）
-  → 指定したMLが存在しないか、Sympa側の権限/設定により参照できません。
-* `.list not found`（`sympa_ctl`）
-  → `LISTFILE_DIR` 配下に `<LISTNAME>.list` を置いてください。
-
----
-
 ## 例：最小のセットアップ
 
 ```bash
