@@ -33,13 +33,9 @@ export PATH="/usr/local/bin/sympa_ctl:$PATH"
 4. コマンド名のエイリアスを作成（同じく `~/.bashrc` か `~/.bash_profile` に追記）
 
 ```bash
-# 実行ファイルに実行権限が無い場合は付与
-chmod +x /usr/local/bin/sympa_ctl/sympa_ctl_main.py
-chmod +x /usr/local/bin/sympa_ctl/export_members.py
-
 # 使いやすい別名を用意
-alias sympa_ctl="/usr/bin/env python3 /usr/local/bin/sympa_ctl/sympa_ctl_main.py"
-alias sympa_export="/usr/bin/env python3 /usr/local/bin/sympa_ctl/export_members.py"
+alias sympa_ctl="python3 /usr/local/bin/sympa_ctl/sympa_ctl_main.py"
+alias sympa_export="python3 /usr/local/bin/sympa_ctl/export_members.py"
 ```
 
 5. シェルを再読み込み
@@ -171,8 +167,8 @@ yamada@example.com
 LIST
 
 echo 'export PATH="/usr/local/bin/sympa_ctl:$PATH"' >>~/.bashrc
-echo 'alias sympa_ctl="/usr/bin/env python3 /usr/local/bin/sympa_ctl/sympa_ctl_main.py"' >>~/.bashrc
-echo 'alias sympa_export="/usr/bin/env python3 /usr/local/bin/sympa_ctl/export_members.py"' >>~/.bashrc
+echo 'alias sympa_ctl="python3 /usr/local/bin/sympa_ctl/sympa_ctl_main.py"' >>~/.bashrc
+echo 'alias sympa_export="python3 /usr/local/bin/sympa_ctl/export_members.py"' >>~/.bashrc
 source ~/.bashrc
 
 cat > /tmp/op.csv <<'CSV'
