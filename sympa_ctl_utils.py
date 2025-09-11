@@ -301,45 +301,6 @@ def load_ml_file(path: Path | str) -> Tuple[bool, MLFile, Exception | None]:
 
     return _ok(MLFile(owners=owners, editors=editors, members=members))
 
-
-# ---- CSV 書式チェック／パース ----
-_CMD_SET = {"CREATE", "REPLACE", "REMOVE"}
-_LISTNAME_RE = re.compile(r"^[A-Za-z0-9!#$%&'*+/=?^_`{|}~.-]+$")
-
-@dataclass
-class CsvRecord:
-    cmd: str
-    listname: str
-
-def parse_csv_with_validation(path: Path | str) -> Tuple[bool, List[CsvRecord], Exception | None]:
-    p = Path(path)
-    if not p.exists():
-        return _ng(f"CSV が見つかりません: {p}")
-
-    records: List[CsvRecord] = []
-    with p.open("r", encoding="utf-8", newline="") as f:
-        reader = csv.reader(f)
-        for lineno, row in enumerate(reader, start=1):
-            if not row or all((col or "").strip() == "" for col in row):
-                continue
-            if len(row) < 2:
-                return _ng(f"{lineno} 行目: カラム数が不足しています (期待: 2 以上, 実際: {len(row)})")
-            cmd = (row[0] or "").strip().upper()
-            listname = (row[1] or "").strip()
-            if cmd not in _CMD_SET:
-                return _ng(f"{lineno} 行目: 不正なコマンド '{cmd}'（許可: {sorted(_CMD_SET)}）")
-            if not _LISTNAME_RE.match(listname):
-                return _ng(f"{lineno} 行目: 不正なリスト名 '{listname}'")
-            records.append(CsvRecord(cmd=cmd, listname=listname))
-
-    return _ok(records)
-
-def validate_csv_format(path: Path | str) -> Tuple[bool, None, Exception | None]:
-    ok, _, err = parse_csv_with_validation(path)
-    if not ok:
-        return False, None, err
-    return _ok()
-
 def escape_xml(s: str) -> str:
     s = s.replace("&", "&amp;")
     s = s.replace("<", "&lt;")
