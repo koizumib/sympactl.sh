@@ -13,7 +13,7 @@ except Exception as e:
     sys.exit(1)
 
 try:
-    from sympa_list_tool import *
+    from sympa_ctl_utils import *
 except Exception as e:
     print(f"\x1b[31mFailed to load sympa_list_tool: {e}\x1b[0m", file=sys.stderr)
     sys.exit(1)
