@@ -218,13 +218,18 @@ def mktemp_with_content(prefix: str, suffix: str = "", content: str = "") -> Pat
     p.chmod(0o644)
     return p
 
+def mktemp_dir(prefix: str = "tmp_sympa_") -> Path:
+    """一時ディレクトリを作成して Path を返す"""
+    path = Path(tempfile.mkdtemp(prefix=prefix))
+    return path
+
 
 def backup_ml(listname: str) -> Tuple[bool, Path, Exception | None]:
     ok, _, err = dump_list_roles(listname)
     if not ok:
         return False, None, err  # type: ignore[return-value]
     src_dir = LISTDATA_DIR / listname
-    backup_dir = mktemp_with_content(prefix=f"sympa_ml_backup_{listname}_")
+    backup_dir = mktemp_dir(prefix=f"sympa_ml_backup_{listname}_")
     if src_dir.is_dir():
         for pat in ("*.dump", "config*"):
             for src in src_dir.glob(pat):

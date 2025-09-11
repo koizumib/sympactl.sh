@@ -30,9 +30,10 @@ sudo mv sympa_ctl /usr/local/bin/
 export PATH="/usr/local/bin/sympa_ctl:$PATH"
 ```
 
-4. コマンド名のエイリアスを作成（同じく `~/.bashrc` か `~/.bash_profile` に追記）
+4. コマンド名のエイリアスを作成
 
 ```bash
+# ~/.barhrc
 # 使いやすい別名を用意
 alias sympa_ctl="python3 /usr/local/bin/sympa_ctl/sympa_ctl_main.py"
 alias sympa_export="python3 /usr/local/bin/sympa_ctl/export_members.py"
@@ -41,7 +42,7 @@ alias sympa_export="python3 /usr/local/bin/sympa_ctl/export_members.py"
 5. シェルを再読み込み
 
 ```bash
-source ~/.bashrc    # もしくは source ~/.bash_profile
+source ~/.bashrc
 ```
 
 > ※ 必要に応じて `config.py`（`SYMPA_CMD` / `DOMAIN` / `LISTFILE_DIR` などの設定）を `/usr/local/bin/sympa_ctl/` 直下に配置してください。
