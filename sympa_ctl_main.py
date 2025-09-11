@@ -282,11 +282,21 @@ def main() -> int:
         eprint_red(f"Failed to open CSV: {e}")
         return 1
 
+    # --- 事前検証フェーズ（不合格なら即終了） ---
     with f:
         reader = csv.reader(f)
+        rows_clean: list[tuple[str, str, str]] = []
+        allowed_cmds = {"CREATE", "REPLACE", "REMOVE"}
+
+        import re as _re
+        name_re = _re.compile(r"^[a-z0-9][a-z0-9.+_-]*$")
+
         for idx, row in enumerate(reader, start=1):
+            # 空行はスキップ（検証対象外）
             if not row or all((c or "").strip() == "" for c in row):
                 continue
+
+            # カラム数チェック（少なくとも 3）
             if len(row) < 3:
                 eprint_red(f"{idx}: invalid columns (need CMD,LISTNAME,DESCRIPTION)")
                 return 1
@@ -295,31 +305,39 @@ def main() -> int:
             listname = (row[1] or "").strip()
             description = (row[2] or "").strip()
 
-            if cmd not in {"CREATE", "REPLACE", "REMOVE"}:
+            # CMD チェック
+            if cmd not in allowed_cmds:
                 eprint_red(f"{idx}: invalid CMD '{cmd}'")
                 return 1
 
-            import re as _re
-            if not _re.match(r"^[a-z0-9][a-z0-9.+_-]*$", listname):
+            # LISTNAME チェック
+            if not name_re.match(listname):
                 eprint_red(f"{idx}: invalid LISTNAME '{listname}'")
                 return 1
 
-            try:
-                if cmd == "CREATE":
-                    ok, _ = handle_create(listname, description)
-                    if not ok:
-                        continue
-                elif cmd == "REPLACE":
-                    ok, _ = handle_replace(listname, description)
-                    if not ok:
-                        continue
-                elif cmd == "REMOVE":
-                    ok, _ = handle_remove(listname)
-                    if not ok:
-                        continue
-            except Exception as e:
-                eprint_red(f"{idx}: unexpected error: {e}")
-                continue
+            rows_clean.append((cmd, listname, description))
+        if rows_clean == []:
+            eprint_red("No valid rows found in CSV")
+            return 1    
+
+    # --- 実行フェーズ（検証済みの rows_clean を処理） ---
+    for cmd, listname, description in rows_clean:
+        try:
+            if cmd == "CREATE":
+                ok, _ = handle_create(listname, description)
+                if not ok:
+                    continue
+            elif cmd == "REPLACE":
+                ok, _ = handle_replace(listname, description)
+                if not ok:
+                    continue
+            elif cmd == "REMOVE":
+                ok, _ = handle_remove(listname)
+                if not ok:
+                    continue
+        except Exception as e:
+            eprint_red(f"{listname}: unexpected error: {e}")
+            continue
 
     return 0
 
