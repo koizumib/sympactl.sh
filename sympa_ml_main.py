@@ -13,23 +13,7 @@ except Exception as e:
     sys.exit(1)
 
 try:
-    from sympa_list_tool import (
-        SympaError,
-        generate_list_xml,
-        load_ml_file,
-        list_exists,
-        create_list,
-        add_members,
-        add_editor,
-        add_owners,
-        del_members,
-        del_editors,
-        del_owners,
-        backup_ml,
-        restore_ml,
-        purge_list, 
-        mktemp_with_content,
-    )
+    from sympa_list_tool import *
 except Exception as e:
     print(f"\x1b[31mFailed to load sympa_list_tool: {e}\x1b[0m", file=sys.stderr)
     sys.exit(1)
@@ -71,7 +55,7 @@ def handle_create(listname: str, description: str) -> tuple[bool, str]:
         eprint_red(str(err))
         return False, "LIST_EXISTS_FAILED"
     if exists:
-        print(f"SKIP CREATE (already exists): {listname}")
+        eprint_red(f"SKIP CREATE (already exists): {listname}")
         return True, "SKIPPED"
 
     # .list 読み込み
@@ -261,7 +245,7 @@ def handle_remove(listname: str) -> tuple[bool, str]:
         return False, "LIST_EXISTS_FAILED"
 
     if not exists:
-        print(f"SKIP REMOVE (list not found): {listname}")
+        eprint_red(f"SKIP REMOVE (list not found): {listname}")
         return True, "SKIPPED"
 
     # バックアップ（失敗したらスキップ）
