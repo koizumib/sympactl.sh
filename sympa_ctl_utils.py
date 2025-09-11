@@ -428,5 +428,6 @@ __all__ = [
     "CsvRecord",
     "parse_csv_with_validation",
     "validate_csv_format",
-    "generate_list_xml",
+    "generate_list_xml", 
+    "mktemp_with_content", 
 ]
