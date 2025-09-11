@@ -1,4 +1,4 @@
 *.back
 *.bak
 config.py
-tests/
+tests/*
