@@ -296,7 +296,7 @@ def main() -> int:
             if not row or all((c or "").strip() == "" for c in row):
                 continue
 
-            # カラム数チェック（少なくとも 3）
+            # カラム数チェック
             if len(row) < 3:
                 eprint_red(f"{idx}: invalid columns (need CMD,LISTNAME,DESCRIPTION)")
                 return 1
@@ -320,7 +320,6 @@ def main() -> int:
             eprint_red("No valid rows found in CSV")
             return 1    
 
-    # --- 実行フェーズ（検証済みの rows_clean を処理） ---
     for cmd, listname, description in rows_clean:
         try:
             if cmd == "CREATE":
